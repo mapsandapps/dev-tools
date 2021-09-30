@@ -1,25 +1,11 @@
 import * as vscode from 'vscode'
 import * as chroma from 'chroma-js'
 
-interface ColorFormat {
-  transform: (color: string) => string
+interface ColorFormat extends vscode.QuickPickItem {
+  description: string
   label: string
+  transform: (color: string) => string
 }
-
-const formats: ColorFormat[] = [
-  {
-    transform: (color: string) => {
-      return chroma(color).hex()
-    },
-    label: 'hex'
-  },
-  {
-    transform: (color: string) => {
-      return chroma(color).css()
-    },
-    label: 'rgb'
-  }
-]
 
 const convert8DigitToRgba = vscode.commands.registerTextEditorCommand(
   'color-code-converter.convert8DigitToRgba',
@@ -32,34 +18,38 @@ const convert8DigitToRgba = vscode.commands.registerTextEditorCommand(
 
     const firstSelection = textEditor.document.getText(selections[0])
 
-    const quickPickItems: vscode.QuickPickItem[] = formats.map((format) => {
-      return {
-        description: format.transform(firstSelection),
-        label: format.label
+    const formats: ColorFormat[] = [
+      {
+        description: chroma(firstSelection).hex(),
+        label: 'hex',
+        transform: (color: string) => {
+          return chroma(color).hex()
+        }
+      },
+      {
+        description: chroma(firstSelection).css(),
+        label: 'rgb',
+        transform: (color: string) => {
+          return chroma(color).css()
+        }
       }
-    })
+    ]
 
-    const onDidSelectItem = (value: vscode.QuickPickItem) => {
-      const transformFunction = formats.find(
-        ({ label }) => label === value.label
-      )?.transform
-
-      if (transformFunction) {
-        // earlier edit no longer valid; start a new edit
-        textEditor.edit((edit) => {
-          for (const selection of textEditor.selections) {
-            if (selection.isEmpty) {
-              // TODO
-            } else {
-              const selectionText = textEditor.document.getText(selection)
-              edit.replace(selection, transformFunction(selectionText))
-            }
+    const onDidSelectItem = (value: ColorFormat) => {
+      // earlier edit no longer valid; start a new edit
+      textEditor.edit((edit) => {
+        for (const selection of textEditor.selections) {
+          if (selection.isEmpty) {
+            // TODO
+          } else {
+            const selectionText = textEditor.document.getText(selection)
+            edit.replace(selection, value.transform(selectionText))
           }
-        })
-      } // TODO: else
+        }
+      })
     }
 
-    vscode.window.showQuickPick(quickPickItems).then((selectedFormat) => {
+    vscode.window.showQuickPick(formats).then((selectedFormat) => {
       if (selectedFormat) {
         onDidSelectItem(selectedFormat)
       }
