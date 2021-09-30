@@ -2,14 +2,14 @@ import * as vscode from 'vscode'
 import * as chroma from 'chroma-js'
 
 interface ColorFormat extends vscode.QuickPickItem {
-  description: string
   label: string
+  description: string
   transform: (color: string) => string
 }
 
 const convert8DigitToRgba = vscode.commands.registerTextEditorCommand(
   'color-code-converter.convert8DigitToRgba',
-  (textEditor: vscode.TextEditor) => {
+  async (textEditor: vscode.TextEditor) => {
     let selections = textEditor.selections.map(
       (s) => new vscode.Range(s.start, s.end)
     )
@@ -20,22 +20,22 @@ const convert8DigitToRgba = vscode.commands.registerTextEditorCommand(
 
     const formats: ColorFormat[] = [
       {
-        description: chroma(firstSelection).hex(),
         label: 'hex',
+        description: chroma(firstSelection).hex(),
         transform: (color: string) => {
           return chroma(color).hex()
         }
       },
       {
-        description: chroma(firstSelection).css(),
         label: 'rgb',
+        description: chroma(firstSelection).css(),
         transform: (color: string) => {
           return chroma(color).css()
         }
       }
     ]
 
-    const onDidSelectItem = (value: ColorFormat) => {
+    const onDidSelectItem = (selectedFormat: ColorFormat) => {
       // earlier edit no longer valid; start a new edit
       textEditor.edit((edit) => {
         for (const selection of textEditor.selections) {
@@ -43,17 +43,17 @@ const convert8DigitToRgba = vscode.commands.registerTextEditorCommand(
             // TODO
           } else {
             const selectionText = textEditor.document.getText(selection)
-            edit.replace(selection, value.transform(selectionText))
+            edit.replace(selection, selectedFormat.transform(selectionText))
           }
         }
       })
     }
 
-    vscode.window.showQuickPick(formats).then((selectedFormat) => {
-      if (selectedFormat) {
-        onDidSelectItem(selectedFormat)
-      }
-    })
+    const selectedFormat = await vscode.window.showQuickPick(formats)
+
+    if (!selectedFormat) return
+
+    onDidSelectItem(selectedFormat)
   }
 )
 
