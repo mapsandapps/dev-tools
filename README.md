@@ -1,5 +1,7 @@
 # color-code-converter README
 
+![test status](https://github.com/mapsandapps/color-code-converter/actions/workflows/Tests/badge.svg)
+
 This is the README for your extension "color-code-converter". After writing up a brief description, we recommend including the following sections.
 
 ## Features
