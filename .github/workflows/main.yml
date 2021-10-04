@@ -32,4 +32,7 @@ jobs:
         with:
           node-version: 14.x
       - run: yarn
+      - run: xvfb-run -a yarn test
+        if: runner.os == 'Linux'
       - run: yarn test
+        if: runner.os != 'Linux'
