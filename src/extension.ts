@@ -7,6 +7,25 @@ interface ColorFormat extends vscode.QuickPickItem {
   transform: (color: string) => string
 }
 
+export function getQuickPickItems(firstSelection: string): ColorFormat[] {
+  return [
+    {
+      label: 'hex',
+      description: chroma(firstSelection).hex(),
+      transform: (color: string) => {
+        return chroma(color).hex()
+      }
+    },
+    {
+      label: 'rgb',
+      description: chroma(firstSelection).css(),
+      transform: (color: string) => {
+        return chroma(color).css()
+      }
+    }
+  ]
+}
+
 const convert8DigitToRgba = vscode.commands.registerTextEditorCommand(
   'color-code-converter.convert8DigitToRgba',
   async (textEditor: vscode.TextEditor) => {
@@ -15,25 +34,6 @@ const convert8DigitToRgba = vscode.commands.registerTextEditorCommand(
     )
 
     // TODO: do something if there are no selections: allow user input?
-
-    const firstSelection = textEditor.document.getText(selections[0])
-
-    const formats: ColorFormat[] = [
-      {
-        label: 'hex',
-        description: chroma(firstSelection).hex(),
-        transform: (color: string) => {
-          return chroma(color).hex()
-        }
-      },
-      {
-        label: 'rgb',
-        description: chroma(firstSelection).css(),
-        transform: (color: string) => {
-          return chroma(color).css()
-        }
-      }
-    ]
 
     const onDidSelectItem = (selectedFormat: ColorFormat) => {
       // earlier edit no longer valid; start a new edit
@@ -49,7 +49,11 @@ const convert8DigitToRgba = vscode.commands.registerTextEditorCommand(
       })
     }
 
-    const selectedFormat = await vscode.window.showQuickPick(formats)
+    const firstSelection = textEditor.document.getText(selections[0])
+
+    const selectedFormat = await vscode.window.showQuickPick(
+      getQuickPickItems(firstSelection)
+    )
 
     if (!selectedFormat) return
 

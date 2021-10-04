@@ -17,7 +17,7 @@
     "commands": [
       {
         "command": "color-code-converter.convert8DigitToRgba",
-        "title": "Convert 8-digit hex code to RGBA"
+        "title": "Convert color to a different format (e.g. hex to rgb)"
       }
     ]
   },
