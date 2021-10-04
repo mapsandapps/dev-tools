@@ -1,8 +1,8 @@
-# color-code-converter README
+# Color Converter
 
 ![test status](https://github.com/mapsandapps/vs-code-color-converter/actions/workflows/main.yml/badge.svg)
 
-This is the README for your extension "color-code-converter". After writing up a brief description, we recommend including the following sections.
+An extension for the [Visual Studio Code](https://code.visualstudio.com/) command palette that allows you to convert colors, e.g. from hex (`#ff0000`) to rgb (`rgb(255,0,0`)).
 
 ## Features
 
