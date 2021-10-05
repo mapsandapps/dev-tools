@@ -1,6 +1,6 @@
 {
-  "name": "color-code-converter",
-  "displayName": "Color Code Converter",
+  "name": "color-converter",
+  "displayName": "Color Converter",
   "description": "",
   "version": "0.0.1",
   "engines": {
@@ -10,13 +10,13 @@
     "Other"
   ],
   "activationEvents": [
-    "onCommand:color-code-converter.convert8DigitToRgba"
+    "onCommand:color-converter.convertColor"
   ],
   "main": "./out/extension.js",
   "contributes": {
     "commands": [
       {
-        "command": "color-code-converter.convert8DigitToRgba",
+        "command": "color-converter.convertColor",
         "title": "Convert color to a different format (e.g. hex to rgb)"
       }
     ]

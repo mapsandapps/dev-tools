@@ -9,6 +9,7 @@
   * unit tests
   * test the different commands
   * test setting(s)
+  * upper vs lower case for hex
 * what's the difference between registerCommand and registerTextEditorCommand?
 * fancify it
   * make a gif for the readme

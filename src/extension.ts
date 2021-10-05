@@ -26,8 +26,8 @@ export function getQuickPickItems(firstSelection: string): ColorFormat[] {
   ]
 }
 
-const convert8DigitToRgba = vscode.commands.registerTextEditorCommand(
-  'color-code-converter.convert8DigitToRgba',
+const convertColor = vscode.commands.registerTextEditorCommand(
+  'color-converter.convertColor',
   async (textEditor: vscode.TextEditor) => {
     let selections = textEditor.selections.map(
       (s) => new vscode.Range(s.start, s.end)
@@ -65,7 +65,7 @@ export function activate(context: vscode.ExtensionContext) {
   // The command has been defined in the package.json file
   // The commandId parameter must match the command field in package.json
 
-  context.subscriptions.push(convert8DigitToRgba)
+  context.subscriptions.push(convertColor)
 }
 
 const transform = (hexCode: string) => {

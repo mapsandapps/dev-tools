@@ -1,15 +1,44 @@
 import * as assert from 'assert'
 
-// You can import and use all API from the 'vscode' module
-// as well as import your extension to test it
-import * as vscode from 'vscode'
-// import * as myExtension from '../../extension';
+import {
+  Position,
+  Selection,
+  SnippetString,
+  commands,
+  window,
+  workspace
+} from 'vscode'
 
 suite('Extension Test Suite', () => {
-  vscode.window.showInformationMessage('Start all tests.')
+  window.showInformationMessage('Start all tests.')
 
-  test('Sample test', () => {
-    assert.strictEqual(-1, [1, 2, 3].indexOf(5))
-    assert.strictEqual(-1, [1, 2, 3].indexOf(0))
+  test('Converts to rgb', async () => {
+    const snippetString = new SnippetString().appendText('#EAAA00')
+
+    const document = await workspace.openTextDocument()
+    const editor = await window.showTextDocument(document)
+    await editor.insertSnippet(snippetString)
+    await assert.strictEqual(document.getText(), '#EAAA00')
+    editor.selection = await new Selection(
+      new Position(0, 0),
+      new Position(0, 7)
+    )
+    commands.executeCommand('color-converter.convertColor').then(() => {
+      // select 2nd item
+      commands
+        .executeCommand('workbench.action.quickOpenSelectNext')
+        .then(() => {
+          commands
+            .executeCommand('workbench.action.quickOpenSelectNext')
+            .then(() => {
+              commands
+                .executeCommand('workbench.action.acceptSelectedQuickOpenItem')
+                .then(async () => {
+                  const newText = await document.getText()
+                  await assert.strictEqual(newText, 'rgb(234,170,0)')
+                })
+            })
+        })
+    })
   })
 })

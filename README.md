@@ -2,7 +2,7 @@
 
 ![test status](https://github.com/mapsandapps/vs-code-color-converter/actions/workflows/main.yml/badge.svg)
 
-An extension for the [Visual Studio Code](https://code.visualstudio.com/) command palette that allows you to convert colors, e.g. from hex (`#ff0000`) to rgb (`rgb(255,0,0`)).
+An extension for the [Visual Studio Code](https://code.visualstudio.com/) command palette that uses [chroma.js](https://vis4.net/chromajs/) to help you convert colors, e.g. from hex (`#eaaa00`) to rgb (`rgb(234,170,0)`).
 
 ## Features
 
