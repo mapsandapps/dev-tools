@@ -1,4 +1,5 @@
-* add a setting for string format (e.g. rgb(0,0,0) vs rgb(0, 0, 0)) ("add spaces" vs "strip spaces")
+* add a setting for string format (e.g. rgb(0,0,0) vs rgb(0, 0, 0)) ("add spaces" vs "strip spaces") (or make this a command)
+* maybe a setting or command for lowercase vs uppercase hex
 * write tests
   * select nothing and run command
   * select one color and run command
@@ -14,6 +15,7 @@
 * fancify it
   * make a gif for the readme
 * if the first selected line isn't a color, still provide a preview conversion in the menu
+* figure out why the tests need waits, and remove them
 
 DONE
 * convert rgba array to string

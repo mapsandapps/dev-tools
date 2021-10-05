@@ -2,43 +2,81 @@ import * as assert from 'assert'
 
 import {
   Position,
+  Range,
   Selection,
-  SnippetString,
+  TextEditor,
   commands,
   window,
   workspace
 } from 'vscode'
 
+function editorSelectAll(editor: TextEditor): TextEditor {
+  const endpoint = editor.document.getText().length
+  const fullRange = new Range(
+    editor.document.positionAt(0),
+    editor.document.positionAt(endpoint)
+  )
+
+  editor.selection = new Selection(fullRange.start, fullRange.end)
+  return editor
+}
+
 suite('Extension Test Suite', () => {
   window.showInformationMessage('Start all tests.')
 
-  test('Converts to rgb', async () => {
-    const snippetString = new SnippetString().appendText('#EAAA00')
-
+  test('Converts hex to lowercase hex', async () => {
     const document = await workspace.openTextDocument()
     const editor = await window.showTextDocument(document)
-    await editor.insertSnippet(snippetString)
-    await assert.strictEqual(document.getText(), '#EAAA00')
-    editor.selection = await new Selection(
-      new Position(0, 0),
-      new Position(0, 7)
+    await editor.edit((edit) => edit.insert(new Position(0, 0), '#EAAA00'))
+
+    editorSelectAll(editor)
+    await commands.executeCommand('color-converter.convertColor')
+    await commands.executeCommand('workbench.action.quickOpenNavigateNext')
+    await commands.executeCommand(
+      'workbench.action.acceptSelectedQuickOpenItem'
     )
-    commands.executeCommand('color-converter.convertColor').then(() => {
-      // select 2nd item
-      commands
-        .executeCommand('workbench.action.quickOpenSelectNext')
-        .then(() => {
-          commands
-            .executeCommand('workbench.action.quickOpenSelectNext')
-            .then(() => {
-              commands
-                .executeCommand('workbench.action.acceptSelectedQuickOpenItem')
-                .then(async () => {
-                  const newText = await document.getText()
-                  await assert.strictEqual(newText, 'rgb(234,170,0)')
-                })
-            })
-        })
-    })
+    await new Promise((resolve) => setTimeout(resolve, 500))
+
+    const newText = document.getText()
+    assert.strictEqual(newText, '#eaaa00')
+  })
+
+  test('Converts hex to rgb', async () => {
+    const document = await workspace.openTextDocument()
+    const editor = await window.showTextDocument(document)
+    await editor.edit((edit) => edit.insert(new Position(0, 0), '#EAAA00'))
+    await new Promise((resolve) => setTimeout(resolve, 200))
+
+    editorSelectAll(editor)
+    await new Promise((resolve) => setTimeout(resolve, 200))
+    await commands.executeCommand('color-converter.convertColor')
+    await commands.executeCommand('workbench.action.quickOpenNavigateNext')
+    await commands.executeCommand('workbench.action.quickOpenNavigateNext')
+    await commands.executeCommand(
+      'workbench.action.acceptSelectedQuickOpenItem'
+    )
+    await new Promise((resolve) => setTimeout(resolve, 200))
+
+    const newText = document.getText()
+    assert.strictEqual(newText, 'rgb(234,170,0)')
+  })
+
+  test('Converts rgb to hex', async () => {
+    const document = await workspace.openTextDocument()
+    const editor = await window.showTextDocument(document)
+    await editor.edit((edit) =>
+      edit.insert(new Position(0, 0), 'rgb(234,170,0)')
+    )
+
+    editorSelectAll(editor)
+    await commands.executeCommand('color-converter.convertColor')
+    await commands.executeCommand('workbench.action.quickOpenNavigateNext')
+    await commands.executeCommand(
+      'workbench.action.acceptSelectedQuickOpenItem'
+    )
+    await new Promise((resolve) => setTimeout(resolve, 500))
+
+    const newText = document.getText()
+    assert.strictEqual(newText, '#eaaa00')
   })
 })
