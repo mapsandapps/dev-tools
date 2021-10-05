@@ -35,7 +35,7 @@ suite('Extension Test Suite', () => {
     await commands.executeCommand(
       'workbench.action.acceptSelectedQuickOpenItem'
     )
-    await new Promise((resolve) => setTimeout(resolve, 500))
+    await new Promise((resolve) => setTimeout(resolve, 200))
 
     const newText = document.getText()
     assert.strictEqual(newText, '#eaaa00')
@@ -74,9 +74,47 @@ suite('Extension Test Suite', () => {
     await commands.executeCommand(
       'workbench.action.acceptSelectedQuickOpenItem'
     )
-    await new Promise((resolve) => setTimeout(resolve, 500))
+    await new Promise((resolve) => setTimeout(resolve, 200))
 
     const newText = document.getText()
     assert.strictEqual(newText, '#eaaa00')
+  })
+
+  test('Converts rgba to 8-digit hex', async () => {
+    const document = await workspace.openTextDocument()
+    const editor = await window.showTextDocument(document)
+    await editor.edit((edit) =>
+      edit.insert(new Position(0, 0), 'rgba(234,170,0,0.5)')
+    )
+
+    editorSelectAll(editor)
+    await commands.executeCommand('color-converter.convertColor')
+    await commands.executeCommand('workbench.action.quickOpenNavigateNext')
+    await commands.executeCommand(
+      'workbench.action.acceptSelectedQuickOpenItem'
+    )
+    await new Promise((resolve) => setTimeout(resolve, 200))
+
+    const newText = document.getText()
+    assert.strictEqual(newText, '#eaaa0080')
+  })
+
+  test('Converts rgba to 8-digit hex', async () => {
+    const document = await workspace.openTextDocument()
+    const editor = await window.showTextDocument(document)
+    await editor.edit((edit) =>
+      edit.insert(new Position(0, 0), 'rgba(234,170,0,0.5)')
+    )
+
+    editorSelectAll(editor)
+    await commands.executeCommand('color-converter.convertColor')
+    await commands.executeCommand('workbench.action.quickOpenNavigateNext')
+    await commands.executeCommand(
+      'workbench.action.acceptSelectedQuickOpenItem'
+    )
+    await new Promise((resolve) => setTimeout(resolve, 200))
+
+    const newText = document.getText()
+    assert.strictEqual(newText, '#eaaa0080')
   })
 })
