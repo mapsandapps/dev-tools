@@ -7,21 +7,39 @@ interface ColorFormat extends vscode.QuickPickItem {
   transform: (color: string) => string
 }
 
+function round(number: number, places: number): number {
+  return Math.round(number * Math.pow(10, places)) / Math.pow(10, places)
+}
+
+function convertToHex(color: string): string {
+  return chroma(color).hex()
+}
+
+function convertToRGB(color: string): string {
+  return chroma(color).css()
+}
+
+function convertToHSL(color: string): string {
+  const hsl = chroma(color).hsl()
+  return `hsl(${round(hsl[0], 0)},${round(hsl[1], 2)},${round(hsl[2], 2)})`
+}
+
 export function getQuickPickItems(firstSelection: string): ColorFormat[] {
   return [
     {
       label: 'hex',
-      description: chroma(firstSelection).hex(),
-      transform: (color: string) => {
-        return chroma(color).hex()
-      }
+      description: convertToHex(firstSelection),
+      transform: convertToHex
     },
     {
       label: 'rgb',
-      description: chroma(firstSelection).css(),
-      transform: (color: string) => {
-        return chroma(color).css()
-      }
+      description: convertToRGB(firstSelection),
+      transform: convertToRGB
+    },
+    {
+      label: 'hsl',
+      description: convertToHSL(firstSelection),
+      transform: convertToHSL
     }
   ]
 }

@@ -1,5 +1,7 @@
 * add a setting for string format (e.g. rgb(0,0,0) vs rgb(0, 0, 0)) ("add spaces" vs "strip spaces") (or make this a command)
 * maybe a setting or command for lowercase vs uppercase hex
+* setting for how to round hsl (the h; and the s & l)
+* do individual commands, e.g. "Convert Color: to rgb"
 * write tests
   * select nothing and run command
   * select one color and run command
