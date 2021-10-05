@@ -86,10 +86,8 @@ suite('Extension Test Suite', () => {
       const document = await workspace.openTextDocument()
       const editor = await window.showTextDocument(document)
       await editor.edit((edit) => edit.insert(new Position(0, 0), '#EAAA00'))
-      await new Promise((resolve) => setTimeout(resolve, 200))
 
       editorSelectAll(editor)
-      await new Promise((resolve) => setTimeout(resolve, 200))
       await commands.executeCommand('color-converter.convertColor')
       await commands.executeCommand('workbench.action.quickOpenNavigateNext')
       await commands.executeCommand('workbench.action.quickOpenNavigateNext')
@@ -126,10 +124,8 @@ suite('Extension Test Suite', () => {
       const document = await workspace.openTextDocument()
       const editor = await window.showTextDocument(document)
       await editor.edit((edit) => edit.insert(new Position(0, 0), '#B3A369'))
-      await new Promise((resolve) => setTimeout(resolve, 200))
 
       editorSelectAll(editor)
-      await new Promise((resolve) => setTimeout(resolve, 200))
       await commands.executeCommand('color-converter.convertColor')
       await commands.executeCommand('workbench.action.quickOpenNavigateNext')
       await commands.executeCommand('workbench.action.quickOpenNavigateNext')
@@ -141,6 +137,32 @@ suite('Extension Test Suite', () => {
 
       const newText = document.getText()
       assert.strictEqual(newText, 'hsl(47,0.33,0.56)')
+    })
+  })
+
+  suite('Multi-select', () => {
+    test('converts multiple colors', async () => {
+      const document = await workspace.openTextDocument()
+      const editor = await window.showTextDocument(document)
+      await editor.edit((edit) =>
+        edit.insert(new Position(0, 0), '#EAAA00\n#5F249F')
+      )
+
+      editor.selections = [
+        new Selection(new Position(0, 0), new Position(0, 7)),
+        new Selection(new Position(1, 0), new Position(1, 7))
+      ]
+
+      await commands.executeCommand('color-converter.convertColor')
+      await commands.executeCommand('workbench.action.quickOpenNavigateNext')
+      await commands.executeCommand('workbench.action.quickOpenNavigateNext')
+      await commands.executeCommand(
+        'workbench.action.acceptSelectedQuickOpenItem'
+      )
+      await new Promise((resolve) => setTimeout(resolve, 200))
+
+      const newText = document.getText()
+      assert.strictEqual(newText, 'rgb(234,170,0)\nrgb(95,36,159)')
     })
   })
 })
