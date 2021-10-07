@@ -1,7 +1,17 @@
-import * as vscode from 'vscode'
+import {
+  ExtensionContext,
+  QuickPickItem,
+  Range,
+  TextEditor,
+  TextEditorEdit,
+  commands,
+  window,
+  Disposable
+} from 'vscode'
 import * as chroma from 'chroma-js'
 
-interface ColorFormat extends vscode.QuickPickItem {
+interface ColorFormat extends QuickPickItem {
+  command: string
   label: string
   description: string
   transform: (color: string) => string
@@ -25,36 +35,38 @@ function convertToHSL(color: string): string {
 }
 
 export function getQuickPickItems(firstSelection: string): ColorFormat[] {
+  const color = firstSelection || '#000000'
   return [
     {
+      command: 'convertToHex',
       label: 'hex',
-      description: convertToHex(firstSelection),
+      description: convertToHex(color),
       transform: convertToHex
     },
     {
+      command: 'convertToRGB',
       label: 'rgb',
-      description: convertToRGB(firstSelection),
+      description: convertToRGB(color),
       transform: convertToRGB
     },
     {
+      command: 'convertToHSL',
       label: 'hsl',
-      description: convertToHSL(firstSelection),
+      description: convertToHSL(color),
       transform: convertToHSL
     }
   ]
 }
 
-const convertColor = vscode.commands.registerTextEditorCommand(
+// the main color conversion menu with quick pick items for the various conversions
+const convertColor = commands.registerTextEditorCommand(
   'color-converter.convertColor',
-  async (textEditor: vscode.TextEditor) => {
-    let selections = textEditor.selections.map(
-      (s) => new vscode.Range(s.start, s.end)
-    )
+  async (textEditor: TextEditor) => {
+    let selections = textEditor.selections.map((s) => new Range(s.start, s.end))
 
-    // TODO: do something if there are no selections: allow user input?
+    // TODO: do something if there are no selections: allow user input? select all text?
 
     const onDidSelectItem = (selectedFormat: ColorFormat) => {
-      // earlier edit no longer valid; start a new edit
       textEditor.edit((edit) => {
         for (const selection of textEditor.selections) {
           if (selection.isEmpty) {
@@ -69,7 +81,7 @@ const convertColor = vscode.commands.registerTextEditorCommand(
 
     const firstSelection = textEditor.document.getText(selections[0])
 
-    const selectedFormat = await vscode.window.showQuickPick(
+    const selectedFormat = await window.showQuickPick(
       getQuickPickItems(firstSelection)
     )
 
@@ -79,11 +91,36 @@ const convertColor = vscode.commands.registerTextEditorCommand(
   }
 )
 
-export function activate(context: vscode.ExtensionContext) {
+function activateQuickCommands(context: ExtensionContext) {
+  const colorCommands = getQuickPickItems('')
+
+  colorCommands.map((command) => {
+    const disposable = commands.registerTextEditorCommand(
+      `color-converter.${command.command}`,
+      async (textEditor: TextEditor, editBuilder: TextEditorEdit) => {
+        // TODO: do something if there are no selections: allow user input? select all text?
+
+        for (const selection of textEditor.selections) {
+          if (selection.isEmpty) {
+            // TODO
+          } else {
+            const selectionText = textEditor.document.getText(selection)
+            editBuilder.replace(selection, command.transform(selectionText))
+          }
+        }
+      }
+    )
+
+    context.subscriptions.push(disposable)
+  })
+}
+
+export function activate(context: ExtensionContext) {
   // The command has been defined in the package.json file
   // The commandId parameter must match the command field in package.json
 
   context.subscriptions.push(convertColor)
+  activateQuickCommands(context)
 }
 
 const transform = (hexCode: string) => {

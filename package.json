@@ -10,7 +10,10 @@
     "Other"
   ],
   "activationEvents": [
-    "onCommand:color-converter.convertColor"
+    "onCommand:color-converter.convertColor",
+    "onCommand:color-converter.convertToHex",
+    "onCommand:color-converter.convertToRGB",
+    "onCommand:color-converter.convertToHSL"
   ],
   "main": "./out/extension.js",
   "contributes": {
@@ -18,6 +21,18 @@
       {
         "command": "color-converter.convertColor",
         "title": "Convert color to a different format (e.g. hex to rgb)"
+      },
+      {
+        "command": "color-converter.convertToHex",
+        "title": "Convert color to hex"
+      },
+      {
+        "command": "color-converter.convertToRGB",
+        "title": "Convert color to rgb"
+      },
+      {
+        "command": "color-converter.convertToHSL",
+        "title": "Convert color to hsl"
       }
     ]
   },

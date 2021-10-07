@@ -4,15 +4,12 @@
 * do individual commands, e.g. "Convert Color: to rgb"
 * write tests
   * select nothing and run command
-  * select one color and run command
   * select invalid color and run command
-  * select multiple colors and run command
   * select multiple colors, one or more is invalid, and run command
   * select multiple colors, one or more is empty, and run command
   * unit tests
   * test the different commands
   * test setting(s)
-  * upper vs lower case for hex
 * what's the difference between registerCommand and registerTextEditorCommand?
 * fancify it
   * make a gif for the readme
@@ -25,3 +22,8 @@ DONE
 * perhaps instead of taking an input, it should use the selected text
 * perhaps have the command palette just be "convert color" and then once that's selected, have a menu pop up with each option to convert to and display a preview of what the first selected item will change to (although this requires more typing from user, so might not be as good?)
 * keep watching the video https://www.youtube.com/watch?v=q5V4T3o3CXE&list=WL&index=2
+* write tests
+  * select one color and run command
+  * select multiple colors and run command
+  * unit tests
+  * upper vs lower case for hex

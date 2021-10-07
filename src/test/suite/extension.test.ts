@@ -161,8 +161,34 @@ suite('Extension Test Suite', () => {
       )
       await new Promise((resolve) => setTimeout(resolve, 200))
 
+      // TODO: it would be nice to verify that the menu says "#EAAA00" and "rgb(234,170,0)"
+
       const newText = document.getText()
       assert.strictEqual(newText, 'rgb(234,170,0)\nrgb(95,36,159)')
+    })
+
+    test.skip('converts valid color and leaves invalid one', async () => {
+      const document = await workspace.openTextDocument()
+      const editor = await window.showTextDocument(document)
+      await editor.edit((edit) =>
+        edit.insert(new Position(0, 0), '#EAAA00\npotato')
+      )
+
+      editor.selections = [
+        new Selection(new Position(0, 0), new Position(0, 7)),
+        new Selection(new Position(1, 0), new Position(1, 6))
+      ]
+
+      await commands.executeCommand('color-converter.convertColor')
+      await commands.executeCommand('workbench.action.quickOpenNavigateNext')
+      await commands.executeCommand('workbench.action.quickOpenNavigateNext')
+      await commands.executeCommand(
+        'workbench.action.acceptSelectedQuickOpenItem'
+      )
+      await new Promise((resolve) => setTimeout(resolve, 200))
+
+      const newText = document.getText()
+      assert.strictEqual(newText, 'rgb(234,170,0)\npotato')
     })
   })
 })
