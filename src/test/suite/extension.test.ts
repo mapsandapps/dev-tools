@@ -164,7 +164,8 @@ suite('Extension Test Suite', () => {
       // TODO: it would be nice to verify that the menu says "#EAAA00" and "rgb(234,170,0)"
 
       const newText = document.getText()
-      assert.strictEqual(newText, 'rgb(234,170,0)\nrgb(95,36,159)')
+      assert.match(newText, /rgb\(234,170,0\)/)
+      assert.match(newText, /rgb\(95,36,159\)/)
     })
 
     test.skip('converts valid color and leaves invalid one', async () => {
